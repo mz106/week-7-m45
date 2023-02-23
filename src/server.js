@@ -1,22 +1,22 @@
+require("dotenv").config();
+require("./db/connection");
 //import express from "../node_modules/....."
 const express = require("express");
+
+const Book = require("./books/model");
 
 const app = express();
 
 app.use(express.json());
 
-app.get("/book", (request, response) => {
-  //   console.log(request);
-  //   response.send("Hello from the book route!");
-  const book = {
-    title: "lord of the rings",
-    author: "tolkein",
-    genre: "fantasy",
-  };
+app.get("/books/getallbooks", async (request, response) => {
+  const allBooks = await Book.find({});
+
+  console.log(allBooks);
 
   const successResponse = {
     message: "response sent successfully",
-    book: book,
+    books: allBooks,
   };
 
   response.send(successResponse);
@@ -28,16 +28,14 @@ app.get("/book", (request, response) => {
 //   "genre": "childrens"
 // }
 
-app.post("/book", (request, response) => {
-  //   console.log(request.body);
-  //   response.send("Hello from the post route!");
-
-  const newBook = {
-    id: Math.floor(Math.random() * 50),
+app.post("/books/addbook", async (request, response) => {
+  const newBook = await Book.create({
     title: request.body.title,
     author: request.body.author,
     genre: request.body.genre,
-  };
+  });
+
+  console.log("newBook: ", newBook);
 
   const successResponse = {
     message: "Successfully added to DB",
